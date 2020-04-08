@@ -1,0 +1,54 @@
+GKA
+Gaussian Kernel Algorithm Correlation Dimension Estimation
+
+Estimatation of correlation dimension, entropy and noise level using the
+GKA algorithm.
+
+INSTALLATION
+
+- Place the contents of this archive in a directory on MATLAB's search
+path.
+- Compile the mex functions. On recent versions of MATLAB,
+>> mex interbinref.c
+>> mex interbin.c
+should be sufficient. Older versions may require you to run mex -setup
+first. If you know nothing about mex files, start by reading the help.
+- run test.m
+
+USAGE
+
+See individual help files and example in test.m
+
+DISTRIBUTION
+
+Please do not redistribute these programs without my permission. This
+distribution can be obtained directly from the author. If you use these
+programs for anything interesting, let me know. If you use these
+programs in a published work please cite the appropriate source(s).
+
+DISCLAIMER
+
+Estimating invariants from noisy time series can be risky. Do *not*
+trust the output of this algorithm blindly. Any liability or problems
+caused are yours!
+
+SOURCES
+
+C. Diks, "Estimating invariants of noisy attractors" Physical Review E
+53 (1996): R4263-R4266
+
+DJ Yu, M Small, R.G. Harrison and C. Diks, "Efficient implemntation of
+the Gaussian kernel algorithm in estimating invariants and noise level
+from noisy time series data" Physical Review E 61 (2000): 3750-3756
+
+CONTACT
+
+For further information or problems, please contact the author:
+
+Michael Small
+Electronic and Information Engineering
+Hong Kong Polytechnic University
+Hung Hom, Kowloon, Hong Kong
+email: ensmall@polyu.edu.hk
+
+25/2/2002

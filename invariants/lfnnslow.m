@@ -1,0 +1,92 @@
+function [Kkdl]=lfnnslow(y,de,tau,nb,beta)
+  
+%function [dl,nfnn]=lfnnslow(y,de,tau,nb,beta)
+%
+%determine the number of local false nearest neighbours for the time
+%series y embedded in local embedding dimension dl<de with lag tau. 
+%
+%for each pair of values (de,tau) the data y is embeded and the
+%nearest neighbour to each point (excluding the immediate
+%neighbourhood of n points) is determined. If the ratio of the
+%distance of the next (kth) points and these points is greater than
+%th then they are counted as false nearest neighbours.
+%
+% Does it different, and probably wrong.
+%
+% default:
+% th=5
+% kth=1
+%
+% p(i,j) is the proportion of false nearest neighbours for de(i)
+% and tau(j).
+%
+%Michael Small
+%2/28/2012
+%michael.small@uwa.edu.au
+
+ra=mean(abs(y-mean(y))); %attractor size
+
+if nargin<5,
+    beta=0.1;%fraction of attractor size
+        disp(['beta = ',int2str(nb)]);
+
+end;
+if nargin<4,
+    nb=40; %nbunmber of neighbours to choose
+    disp(['nb = ',int2str(nb)]);
+end;
+if nargin<3,
+  tau=firstzero(y);
+  disp(['tau = ',int2str(tau)]);
+end;
+
+if nargin<2,
+  de=10;
+  disp(['de = ',int2str(de)]);
+end;
+
+Kkdl=[];
+p=[];
+  px=[];
+        for dl=1:de,
+
+  hand=waitbar(0,['lfnn: working dl=',int2str(dl)]);
+
+  %embed the data
+  X=embed(y,dl,tau);
+  [dx,nx]=size(X);
+      for i=1:nx,
+
+      dists=rms(X'-ones(nx,1)*X(:,i)');
+      dists(i)=inf;
+      [dummy,ind]=sort(dists); %ind are the nb closest neighbours in R^de
+      ind=ind(1:nb);
+      
+      %PCA needs u and s^2 
+      [u,s,v]=svd(X(:,ind),'econ'); %'econ' since we don't need v
+            %in PCA dl-dim space
+            normit=u(:,1:dl)'*(X(:,ind)-X(:,i)*ones(1,nb));
+            if dl==1,
+                dists=abs(normit);
+            else
+                dists=rms(normit);
+            end;
+
+            [dummy,ind1]=min(dists); %the nearest neighbour in dl projection
+            indnn=ind(ind1);
+            %now we go back to de-space
+            k=nx-max(i,indnn)-1;%how far from the end are we
+            biggy=abs(y(i+(dl-1)*tau+1:i+(dl-1)*tau+k)-y(indnn+(dl-1)*tau+1:indnn+(dl-1)*tau+k));
+            delta=find(biggy>beta*ra);
+            if isempty(delta),
+                 Kkdl(i,dl)=nan;
+            else
+                Kkdl(i,dl)=delta(1);
+            end;
+                  waitbar(i/nx,hand);
+
+      end;
+        close(hand);
+
+  end;  
+  
